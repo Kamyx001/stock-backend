@@ -1,22 +1,121 @@
 package me.kamyx.stock.service;
 
+import me.kamyx.stock.Maths;
 import me.kamyx.stock.model.Stock;
 import me.kamyx.stock.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class StockService {
     @Autowired
     private StockRepository stockRepository;
+
     public List<Stock> allStocks() {
         return stockRepository.findAll();
     }
+    public void addPrice(String shortName, double price) {
+        Optional<Stock> stock = stockRepository.findByShortName(shortName);
+        if (stock.isPresent()) {
+            Stock s = stock.get();
+            s.setCurrentPrice(price);
+            s.getPriceHistory().add(price);
+            stockRepository.save(s);
+        }
+    }
+    public List<Double> getPriceHistory(String shortName) {
+        Optional<Stock> stock = stockRepository.findByShortName(shortName);
+        if (stock.isPresent()) {
+            Stock s = stock.get();
+            return s.getPriceHistory();
+        }
+
+        return null;
+    }
+
+//    public void addToPriceHistory(String shortName, double price) {
+//        Optional<Stock> stock = stockRepository.findByShortName(shortName);
+//        if (stock.isPresent()) {
+//            Stock s = stock.get();
+//            s.changeCurrentPrice(price);
+//            stockRepository.save(s);
+//        }
+    public double updatePrice(String shortName) {
+
+        List<Double> hPrices = new ArrayList();
+            Optional<Stock> stock = stockRepository.findByShortName(shortName);
+            if (stock.isPresent()) {
+                Stock s = stock.get();
+                hPrices = s.getPriceHistory();
+            }
+            Maths maths = new Maths();
+            double meanReturns=maths.meanReturn((ArrayList<Double>) hPrices);
+            double standardDReturns=maths.standardDeviation((ArrayList<Double>) hPrices);
+            double currentPrice = hPrices.get(hPrices.size()-1);
+            System.out.println(meanReturns);
+            System.out.println(standardDReturns);
+            double timeStep = 1.0/400.0; // Ustaw krok czasowy na 1 dzień (przyjmując 252 dni robocze w roku)
+            double simulatedPrice = Maths.simulatePrice(currentPrice, meanReturns, standardDReturns, timeStep);
+            addPrice(shortName,simulatedPrice);
+
+
+            return simulatedPrice;
+    }
+    public void allStocksUpdatePrice() {
+        List<Stock> stocks = allStocks();
+        double sum=0;
+        for (Stock s : stocks) {
+            updatePrice(s.getShortName());
+        }
+    }
+
+
+
+
+
+
+//    public double updatePrice(String shortName,double mu,double sigma,double dt) {
+//        Random random = new Random();
+//        //double[] prices = new double[steps];
+//        List <Double> hPrices= new ArrayList();
+//        Optional<Stock> stock = stockRepository.findByShortName(shortName);
+//        if (stock.isPresent()) {
+//            Stock s = stock.get();
+//            hPrices = s.getPriceHistory();
+//        }
+//        List <Double> prices= new ArrayList();
+//
+//
+//        Double S0 = hPrices.get(hPrices.size()-1);
+//        //prices[0] = S0;
+//
+//        for (int i = 1; i < 2; i++) {       //steps-test
+//            double normalRandom = random.nextGaussian();
+//            double driftComponent = (mu - 0.5 * Math.pow(sigma, 2)) * dt;
+//            double diffusionComponent = sigma * Math.sqrt(dt) * normalRandom;
+//            //prices[i] = prices[i - 1] * Math.exp(driftComponent + diffusionComponent);
+//            prices.add(prices.get(i-1)* Math.exp(driftComponent + diffusionComponent));
+//
+//        }
+//
+//        return prices.get(0);
+//    }
+
+
+
+
+
+
+
 
     public Optional<Stock> singleStock(String shortName) {
         return stockRepository.findByShortName(shortName);
     }
 }
+
+//  }

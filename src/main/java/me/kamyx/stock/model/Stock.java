@@ -24,4 +24,9 @@ public class Stock {
     @DocumentReference
     private List<Comment> commentIds;
 
+    public void changeCurrentPrice(double price) {
+        this.currentPrice = price;
+        this.priceHistory.add(price);
+    }
+
 }
