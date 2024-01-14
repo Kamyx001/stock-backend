@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import java.util.List;
 
 @SpringBootApplication
 @RestController
+@EnableScheduling
+
 public class StockApplication {
 
 	public static void main(String[] args) {
@@ -31,7 +34,7 @@ public class StockApplication {
 			System.out.println(service.allStocks());
 
 			//System.out.println(repository.getCurrentPrice("AAPL"));
-			System.out.println(service.singleStock("AAPL"));
+			//System.out.println(service.singleStock("AAPL"));
 			//service.addPrice("AAPL", 100.00);
 			//System.out.println(service.singleStock("AAPL"));
 			//System.out.println(service.getPriceHistory("AAPL"));
@@ -42,8 +45,8 @@ public class StockApplication {
 //			System.out.println(service.updatePrice("AAPL"));
 //			System.out.println(service.updatePrice("AAPL"));
 
-			System.out.println(service.updatePrice("AAPL"));
-			service.allStocksUpdatePrice();
+			//System.out.println(service.updatePrice("AAPL"));
+			//service.allStocksUpdatePrice();
 
 
 

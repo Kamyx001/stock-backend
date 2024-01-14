@@ -4,8 +4,11 @@ import me.kamyx.stock.Maths;
 import me.kamyx.stock.model.Stock;
 import me.kamyx.stock.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,20 +60,32 @@ public class StockService {
             double meanReturns=maths.meanReturn((ArrayList<Double>) hPrices);
             double standardDReturns=maths.standardDeviation((ArrayList<Double>) hPrices);
             double currentPrice = hPrices.get(hPrices.size()-1);
-            System.out.println(meanReturns);
-            System.out.println(standardDReturns);
+            //System.out.println(meanReturns);
+            //System.out.println(standardDReturns);
             double timeStep = 1.0/400.0; // Ustaw krok czasowy na 1 dzień (przyjmując 252 dni robocze w roku)
+
+
             double simulatedPrice = Maths.simulatePrice(currentPrice, meanReturns, standardDReturns, timeStep);
-            addPrice(shortName,simulatedPrice);
+            while (simulatedPrice-currentPrice>0.1*currentPrice || simulatedPrice-currentPrice<-0.1*currentPrice) {
+                simulatedPrice = Maths.simulatePrice(currentPrice, meanReturns, standardDReturns, timeStep);
+            }
+
+            BigDecimal bg = new BigDecimal(simulatedPrice); // tworzymy obiekt BigDecimal z liczby
+            bg = bg.setScale(2, RoundingMode.HALF_UP); // ustawiamy skalę na 2 miejsca po przecinku i tryb zaokrąglania na HALF_UP
+            double simulatedPriceFinal = bg.doubleValue(); // pobieramy wartość double z obiektu BigDecimal
+
+            addPrice(shortName,simulatedPriceFinal);
 
 
-            return simulatedPrice;
+            return simulatedPriceFinal;
     }
+    @Scheduled(fixedDelay = 120000)
     public void allStocksUpdatePrice() {
         List<Stock> stocks = allStocks();
         double sum=0;
         for (Stock s : stocks) {
             updatePrice(s.getShortName());
+            System.out.println(s.getShortName()+": "+s.getCurrentPrice());
         }
     }
 
