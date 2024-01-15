@@ -42,5 +42,14 @@ public class StocksController {
         stockService.buyStocks(payload.get("shortName"), Integer.parseInt(payload.get("shares")));
         return new ResponseEntity<>("Transaction Complete", HttpStatus.OK);
     }
+    @PostMapping("/sellShares")
+    public ResponseEntity<String> sellShares(@RequestBody Map<String, String> payload) {
+        stockService.sellStocks(payload.get("shortName"), Integer.parseInt(payload.get("shares")));
+        return new ResponseEntity<>("Transaction Complete", HttpStatus.OK);
+    }
+
+
+
+
 }
 

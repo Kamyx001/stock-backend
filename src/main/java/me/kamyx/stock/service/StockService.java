@@ -71,7 +71,7 @@ public class StockService {
 
 
             double simulatedPrice = Maths.simulatePrice(currentPrice, meanReturns, standardDReturns, timeStep);
-            while (simulatedPrice-currentPrice>0.1*currentPrice || simulatedPrice-currentPrice<-0.1*currentPrice) {
+            while (simulatedPrice-currentPrice>0.06*currentPrice || simulatedPrice-currentPrice<-0.06*currentPrice) {
                 simulatedPrice = Maths.simulatePrice(currentPrice, meanReturns, standardDReturns, timeStep);
             }
 
@@ -110,6 +110,15 @@ public class StockService {
 //                    .matching(query(where("shortName").is(shortName)))
 //                    .apply(update("myShares", s.getMyShares()))
 //                    .first();
+        }
+
+    }
+    public void sellStocks(String shortName, int myShares) {
+        Optional<Stock> stock = stockRepository.findByShortName(shortName);
+        if (stock.isPresent()) {
+            Stock s = stock.get();
+            s.setMyShares(s.getMyShares()-myShares);
+            stockRepository.save(s);
         }
 
     }
