@@ -47,6 +47,8 @@ public class StockApplication {
 
 			//System.out.println(service.updatePrice("AAPL"));
 			//service.allStocksUpdatePrice();
+			service.buyStocks("AAPL", 100);
+			System.out.println(service.singleStock("AAPL"));
 
 
 

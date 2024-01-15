@@ -21,12 +21,17 @@ public class Stock {
     private String shortName;
     private double currentPrice;
     private List<Double> priceHistory;
+    private double myShares;
     @DocumentReference
     private List<Comment> commentIds;
 
     public void changeCurrentPrice(double price) {
         this.currentPrice = price;
         this.priceHistory.add(price);
+    }
+
+    public void changeMyShares(double shares) {
+        this.myShares = shares;
     }
 
 }

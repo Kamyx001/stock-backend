@@ -4,6 +4,7 @@ import me.kamyx.stock.Maths;
 import me.kamyx.stock.model.Stock;
 import me.kamyx.stock.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
+import static org.springframework.data.mongodb.core.query.Update.update;
 
 @Service
 public class StockService {
@@ -79,7 +84,7 @@ public class StockService {
 
             return simulatedPriceFinal;
     }
-    @Scheduled(fixedDelay = 120000)
+    @Scheduled(fixedDelay = 300000)
     public void allStocksUpdatePrice() {
         List<Stock> stocks = allStocks();
         double sum=0;
@@ -88,6 +93,28 @@ public class StockService {
             System.out.println(s.getShortName()+": "+s.getCurrentPrice());
         }
     }
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    public void buyStocks(String shortName, int myShares) {
+        Optional<Stock> stock = stockRepository.findByShortName(shortName);
+        if (stock.isPresent()) {
+            Stock s = stock.get();
+            s.setMyShares(s.getMyShares()+myShares);
+            stockRepository.save(s);
+
+
+
+
+//            mongoTemplate.update(Stock.class)
+//                    .matching(query(where("shortName").is(shortName)))
+//                    .apply(update("myShares", s.getMyShares()))
+//                    .first();
+        }
+
+    }
+
+
 
 
 
