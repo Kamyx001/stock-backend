@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class CommentService {
     @Autowired
@@ -26,4 +27,9 @@ public class CommentService {
 
         return comment;
     }
+//    public String getComment(String stockShortName){
+//        StockService stockService = new StockService();
+//
+//        return stockService.getCommentIds(stockShortName);
+//    }
 }

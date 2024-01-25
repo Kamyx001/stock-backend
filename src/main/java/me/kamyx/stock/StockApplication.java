@@ -2,7 +2,9 @@ package me.kamyx.stock;
 
 import me.kamyx.stock.model.Stock;
 import me.kamyx.stock.repository.StockRepository;
+import me.kamyx.stock.repository.WalletRepository;
 import me.kamyx.stock.service.StockService;
+import me.kamyx.stock.service.WalletService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,6 +20,7 @@ import java.util.List;
 @EnableScheduling
 
 public class StockApplication {
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(StockApplication.class, args);
@@ -49,11 +52,20 @@ public class StockApplication {
 			//service.allStocksUpdatePrice();
 			service.buyStocks("AAPL", 100);
 			System.out.println(service.singleStock("AAPL"));
+			service.buyStocks("AAPL", 100);
+			service.sellStocks("NFLX", 100);
 
+		};
 
+	}
+
+	@Bean
+	CommandLineRunner runner2(WalletRepository walletrepository,WalletService walletservice) {
+		return args -> {
+			System.out.println(walletrepository.findByUsername("User1"));
+			//walletservice.subtractBalance(100.0);
 
 
 		};
 	}
-
 }

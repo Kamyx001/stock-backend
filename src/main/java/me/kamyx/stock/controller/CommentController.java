@@ -21,5 +21,9 @@ public class CommentController {
     public ResponseEntity<Comment> createComment(@RequestBody Map<String, String> payload) {
         return new ResponseEntity<Comment>(commentService.createComment(payload.get("commentBody"), payload.get("shortName")), HttpStatus.CREATED);
     }
+//    @GetMapping("/comments/{shortName}")
+//    public ResponseEntity<Comment> getComment(@PathVariable("shortName") String shortName) {
+//        return new ResponseEntity<Comment>(commentService.getCommentIds(shortName), HttpStatus.OK);
+//    }
 
 }

@@ -14,5 +14,6 @@ public interface StockRepository extends MongoRepository<Stock, ObjectId> {
    // Optional <List<Double>> getPriceHistory(String shortName);
    // void changeCurrentPrice(String shortName, double price);
 //    Optional<Double> getCurrentPrice(String shortName);
+    //Optional<ObjectId> getcommentIds(String shortName);
 
 }

@@ -1,8 +1,10 @@
 package me.kamyx.stock.service;
 
 import me.kamyx.stock.Maths;
+import me.kamyx.stock.model.Comment;
 import me.kamyx.stock.model.Stock;
 import me.kamyx.stock.repository.StockRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,16 +15,14 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-import static org.springframework.data.mongodb.core.query.Update.update;
 
 @Service
 public class StockService {
     @Autowired
     private StockRepository stockRepository;
+
+    @Autowired
+    private WalletService walletService;
 
     public List<Stock> allStocks() {
         return stockRepository.findAll();
@@ -102,10 +102,8 @@ public class StockService {
             Stock s = stock.get();
             s.setMyShares(s.getMyShares()+myShares);
             stockRepository.save(s);
-
-
-
-
+//            WalletService walletService = new WalletService();
+            walletService.subtractBalance((s.getCurrentPrice()*myShares));
 //            mongoTemplate.update(Stock.class)
 //                    .matching(query(where("shortName").is(shortName)))
 //                    .apply(update("myShares", s.getMyShares()))
@@ -119,9 +117,20 @@ public class StockService {
             Stock s = stock.get();
             s.setMyShares(s.getMyShares()-myShares);
             stockRepository.save(s);
+            walletService.addBalance((s.getCurrentPrice()*myShares));
+
+
         }
 
     }
+//    public List<ObjectId> getCommentIds(String shortName) {
+//        Optional<Stock> stock = stockRepository.findByShortName(shortName);
+//        if (stock.isPresent()) {
+//            Stock s = stock.get();
+//            return s.getCommentIds();
+//        }
+//        return null;
+//    }
 
 
 
